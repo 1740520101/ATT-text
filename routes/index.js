@@ -1,8 +1,5 @@
 const router = require('express').Router()
 const path = require('path');
-const md5 = require('md5');
-/* const mysql = require('mysql'); */
-const db = require('../models/mysql')
 const { User } = require('../models/user')
 
 const viewPath = path.join(__dirname,'../views')
@@ -27,6 +24,11 @@ router.get('/reg',(req,res)=>{
     res.sendFile(signupPath)
 })
 
+router.get('/room',(req,res)=>{
+    const roomPath = viewPath + '/room.html'
+    res.sendFile(roomPath)
+})
+
 
 const regName = /^[a-zA-Z]\w{3,}///正则表达式
 
@@ -49,7 +51,7 @@ router.post('/main',(req,res)=>{
 
 router.post('/reg', (req, res) => {
     const username = req.body.username
-    const pass_hash = req.body.password
+    const password = req.body.password
     if (!username){
         res.json({
             err: 1,
@@ -64,7 +66,7 @@ router.post('/reg', (req, res) => {
         })
         return
     }else
-    if (!pass_hash){
+    if (!password){
         res.json({
             err: 1,
             msg: '请输入用密码!'
@@ -78,7 +80,7 @@ router.post('/reg', (req, res) => {
         })
         return
     }else 
-    if(req.body.repassword!=pass_hash){
+    if(req.body.repassword!=password){
         res.json({
             err: 1,
             msg: '两次输入密码不一致!'
@@ -102,25 +104,8 @@ router.post('/reg', (req, res) => {
             return
         }
     })
-    let salt;//撒盐
-    let j =0;
-    result=new Array(8).fill(null);;
-    j=0
-    while(j<8){
-        let Z= Math.floor(Math.random()*55);//取出字母
-        if(Z>90&&Z<97){
-            Z+=6
-        }
-        Z = String.fromCharCode(65+Z)
-        if(!result.includes(Z)){
-            result[j] = Z;
-            j++;
-        }
-    }
-    for(j=0;j<8;j++){
-        salt += result[j]
-    }
-    User.create({username,pass_hash,salt},err=>{
+
+    User.create({username,password},err=>{
         if(err){
             res.json({
                 err:1,
@@ -141,24 +126,38 @@ router.post('/login', (req, res) => {
     User.find(username,(err,user)=>{
         if(err){
             console.error('find user failed:',err.message)
-            res.join({
+            res.json({
                 err:1,
                 msg:err.message
             })
             return
         }
         if(user){
-            let password = md5(req.body.password+user.salt)
-            if(user.pass_salt!==password){
-                res.join({
+            const password = req.body.password
+            req.session.user = user
+            const userData = req.session.user
+            const us = new User
+            us.id = userData.id
+            us.name = userData.name
+            us.pass_hash = userData.pass_hash
+            us.pass_salt = userData.pass_salt
+            us.cash = userData.cash
+            us.gameStart = userData.gameStart
+            us.gameCards = userData.gameCards
+            us.room = userData.room
+            
+            us.room = false
+            if(!us.checkPassword(password)){
+                res.json({
                     err:1,
                     msg:"密码错误"
                 })
                 return
             }
-            user.gameStart = false
-            user.gameCards = ''
-            req.session.user = user
+            us.gameStart = false
+            us.gameCards = ''
+            us.room = false
+            req.session.user = us
 
             res.json({
                 err:0,

@@ -34,13 +34,6 @@ app.use(bodyParser.urlencoded({
 
 
 
-
-/* app.post('/islogin',(req,res) => {
-    res.json({
-        isLogin:isLogin
-    })
-}) */
-
 app.use('/game',gameRouter)
 
 app.use('/',indexRouter)

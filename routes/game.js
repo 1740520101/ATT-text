@@ -60,7 +60,6 @@ router.post('/pour', (req, res) => {
         res.redirect('/reg')
         return
     }
-    console.log(req.session)
     const userData = req.session.user
     const user = new User
     user.id = userData.id
@@ -120,7 +119,6 @@ router.post('/switch', (req, res) => { //换牌
         res.redirect('/signin')
         return
     }
-    console.log('user-2',req.session)
    const userData = req.session.user
    const user = new User
    user.id = userData.id
@@ -130,7 +128,6 @@ router.post('/switch', (req, res) => { //换牌
    user.cash = userData.cash
    user.gameStart = userData.gameStart
    user.gameCards = userData.gameCards
-   user.hash = userData.hash
     let keep = req.body['keepcard[]']
     for (let i = 0; i < req.body.length; i++) {
         if (keep[i] == "0") {
@@ -215,6 +212,43 @@ router.post('/switch', (req, res) => { //换牌
         })
         return
     }
+})
+
+
+router.post('/room',(req,res)=>{//进入房间
+    if(!(req.session && req.session.user)){
+        res.redirect('/reg')
+        return
+    }
+    if(req.session.user.room===true){
+        res.json({
+            code: 1,
+            msg: "已经进入其他房间，不能再进！"
+        })
+        return
+    }
+    let roomtf = req.body['roomtfarr[]']
+    const userData = req.session.user
+    const user = new User
+    user.id = userData.id
+    user.name = userData.name
+    user.pass_hash = userData.pass_hash
+    user.pass_salt = userData.pass_salt
+    user.cash = userData.cash
+    user.gameStart = userData.gameStart
+    user.gameCards = userData.gameCards
+    user.hash = userData.hash
+    user.room = userData.room
+    user.roomrf = userData.roomtf
+    user.room = true
+    user.roomrf = roomtf
+    req.session.user = user
+    res.json({
+        code: 0,
+        msg: "成功进入房间！",
+        roomtf:roomtf
+    })
+    return
 })
 
 module.exports = router
