@@ -228,6 +228,13 @@ router.post('/room',(req,res)=>{//进入房间
         return
     }
     let roomtf = req.body['roomtfarr[]']
+    for(let i = 0;i<roomtf.length;i++){
+        if(roomtf[i]==='true'){
+            roomtf[i] = true
+        }else{
+            roomtf[i] = false
+        }
+    }
     const userData = req.session.user
     const user = new User
     user.id = userData.id
@@ -235,18 +242,20 @@ router.post('/room',(req,res)=>{//进入房间
     user.pass_hash = userData.pass_hash
     user.pass_salt = userData.pass_salt
     user.cash = userData.cash
-    user.gameStart = userData.gameStart
-    user.gameCards = userData.gameCards
+    user.gameStart = userData.gameStart//游戏是否开始
+    user.gameCards = userData.gameCards//卡牌
     user.hash = userData.hash
     user.room = userData.room
-    user.roomrf = userData.roomtf
+    user.roomtf = userData.roomtf//房间是否有人
+    user.roomid = userData.room.id//房间号
     user.room = true
-    user.roomrf = roomtf
+    user.roomtf = roomtf
+    user.roomid = req.body.roomid
+    user.roomtf = roomtf
     req.session.user = user
     res.json({
         code: 0,
-        msg: "成功进入房间！",
-        roomtf:roomtf
+        msg: "成功进入房间！"
     })
     return
 })

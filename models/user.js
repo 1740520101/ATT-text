@@ -1,5 +1,4 @@
 const mysql = require('./mysql')
-const md5 = require('md5');
 const crypto = require('crypto')
 
 const md5encode = (str) =>{//随机盐

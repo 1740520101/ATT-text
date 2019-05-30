@@ -39,7 +39,9 @@ router.post('/main',(req,res)=>{
         res.json({
             code:0,
             data:{
-                cash:user.cash
+                cash:user.cash,
+                roomtf:user.roomtf,
+                roomid:user.roomid
             }
         })
     }else{
