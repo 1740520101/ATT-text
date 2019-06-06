@@ -80,6 +80,8 @@ router.post('/pour', (req, res) => {
         })
         return
     }
+    user.cash = Number(user.cash);//转化为int类型
+    coin = Number(coin);
     if (user.cash < coin) {
         req.session.user = user
         res.json({
@@ -172,14 +174,9 @@ router.post('/switch', (req, res) => { //换牌
         user.cash += winCoin
         const cash = user.cash
         const id = user.id
-        console.log('user-5',user)
-        console.log('user.id-2',user.id)
-        console.log('id-2',id)
         user.save({cash,id},err=>{
-            console.log(2)
             if(err){
                 req.session.user = user
-                console.log('user-6',user)
                 res.json({
                     code:1,
                     desc:'更新失败',
@@ -191,7 +188,6 @@ router.post('/switch', (req, res) => { //换牌
                 return
             }
             req.session.user = user
-            console.log('user-7',user)
             res.json({
                 gameCoin: user.cash,
                 winCoin,
@@ -203,7 +199,6 @@ router.post('/switch', (req, res) => { //换牌
     } else {
         user.cash = user.cash
         req.session.user = user
-        console.log('user-8',user)
         res.json({
             gameCoin: user.cash,
             winCoin,

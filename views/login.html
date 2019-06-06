@@ -11,14 +11,14 @@
         <form action="index_do.php" method="post" enctype="multipart/form-data">                     
             <input type="text" id="username" name="username" list="username" required="required" placeholder="用户名" class="input1"><br>
             <input type="password" id="password" name="password" required="required" placeholder="密码" class="input1"><br>
-            <input type="button" name="login" id="login" value="登录" class="input2">
+            <input type="button" name="login" id="loginbt" value="登录" class="input2" >
             <a href="http://localhost:3000/reg">注册</a>
             <!-- <a href="findpassword.php">忘记密码?</a> -->
         </form>
     </p>
     <script src="./Javascripts/jquery-3.3.1.js"></script>
     <script>
-           $('#login').on('click',()=>{
+           $('#loginbt').on('click',()=>{
                 $.post('/login',{
                     username:$('#username').val(),
                     password:$('#password').val(),

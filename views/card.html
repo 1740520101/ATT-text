@@ -265,8 +265,14 @@
     minusBth.on('mousedown',()=>{
         if(!gameStart){
             pourTimer = setInterval(()=>{
-                pourScore-=100;
-                pourInput.val(pourScore);
+                if(pourScore<=0){
+                    pourScore=0;
+                }
+                else
+                {
+                    pourScore-=100;
+                    pourInput.val(pourScore);
+                }
             },200)
         }else{
             alert("游戏已经开始不能下注");
